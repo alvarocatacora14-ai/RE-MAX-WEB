@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer contraseña | RE/MAX</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f4f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .contenedor {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px #00000015;
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            color: #183b56;
+        }
+
+        p {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin-top: 16px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 6px;
+            background: #d71920;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        #mensaje {
+            margin-top: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .oculto {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="contenedor">
+        <h1>Restablecer contraseña</h1>
+        <p>Ingresa tu nueva contraseña para recuperar el acceso al panel de administración.</p>
+
+        <p id="estado">Verificando el enlace de recuperación...</p>
+
+        <form id="formulario" class="oculto">
+            <label for="password">Nueva contraseña</label>
+            <input
+                type="password"
+                id="password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+            >
+
+            <label for="confirmar">Confirmar contraseña</label>
+            <input
+                type="password"
+                id="confirmar"
+                minlength="8"
+                autocomplete="new-password"
+                required
+            >
+
+            <button id="guardar" type="submit">
+                Guardar nueva contraseña
+            </button>
+        </form>
+
+        <p id="mensaje" role="status" aria-live="polite"></p>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+
+    <script>
+        (() => {
+            const estado = document.querySelector('#estado');
+            const formulario = document.querySelector('#formulario');
+            const mensaje = document.querySelector('#mensaje');
+            const guardar = document.querySelector('#guardar');
+
+            const config = window.SUPABASE_CONFIG;
+
+            if (
+                !config ||
+                !config.url ||
+                !config.anonKey ||
+                !window.supabase
+            ) {
+                estado.textContent =
+                    'No se pudo cargar la configuración de Supabase.';
+                return;
+            }
+
+            const client = window.supabase.createClient(
+                config.url,
+                config.anonKey
+            );
+
+            let enlaceValido = false;
+
+            const mostrarFormulario = () => {
+                enlaceValido = true;
+                estado.textContent =
+                    'Enlace verificado. Puedes establecer una nueva contraseña.';
+                formulario.classList.remove('oculto');
+            };
+
+            client.auth.onAuthStateChange((event, session) => {
+                if (event === 'PASSWORD_RECOVERY' && session) {
+                    mostrarFormulario();
+                }
+            });
+
+            formulario.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                if (!enlaceValido) {
+                    mensaje.textContent =
+                        'Primero debes abrir un enlace de recuperación válido.';
+                    return;
+                }
+
+                const password =
+                    document.querySelector('#password').value;
+                const confirmar =
+                    document.querySelector('#confirmar').value;
+
+                if (password !== confirmar) {
+                    mensaje.textContent =
+                        'Las contraseñas no coinciden.';
+                    return;
+                }
+
+                guardar.disabled = true;
+                guardar.textContent = 'Guardando...';
+                mensaje.textContent = '';
+
+                try {
+                    const { error } = await client.auth.updateUser({
+                        password: password
+                    });
+
+                    if (error) {
+                        mensaje.textContent =
+                            'No se pudo cambiar la contraseña: ' +
+                            error.message;
+                        return;
+                    }
+
+                    formulario.classList.add('oculto');
+                    estado.textContent =
+                        '¡Contraseña actualizada correctamente!';
+                    mensaje.textContent =
+                        'Ahora puedes regresar al inicio de sesión del administrador.';
+                } catch (error) {
+                    mensaje.textContent =
+                        'Ocurrió un error de conexión. Inténtalo nuevamente.';
+                    console.error(error);
+                } finally {
+                    guardar.disabled = false;
+                    guardar.textContent = 'Guardar nueva contraseña';
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

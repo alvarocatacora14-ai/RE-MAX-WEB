@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Administración | RE/MAX Zona</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="login-screen" id="login-view" aria-labelledby="login-title">
+    <section class="login-card">
+      <img class="login-logo" src="../Ima/CONTENEDOR.png" alt="RE/MAX Zona">
+      <p class="eyebrow">Intranet inmobiliaria</p><h1 id="login-title">Bienvenido</h1>
+      <p class="login-copy">Ingresa con tu cuenta autorizada para administrar el contenido del sitio.</p>
+
+
+
+<form id="login-form">
+  <label>
+    Correo electrónico
+    <input
+      type="email"
+      id="email"
+      autocomplete="email"
+      required
+    >
+  </label>
+
+  <label>
+    Contraseña
+    <input
+      type="password"
+      id="password"
+      autocomplete="current-password"
+      required
+    >
+  </label>
+
+  <button type="submit">Iniciar sesión</button>
+
+  <p class="forgot-password">
+    <a href="#" id="forgot-password">¿Olvidaste tu contraseña?</a>
+  </p>
+</form>
+
+
+      <p class="message" id="login-message" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <section class="dashboard" id="admin-view" hidden>
+    <aside class="sidebar">
+      <a class="sidebar-brand" href="../Index.html" aria-label="Ver sitio público"><img src="../Ima/CONTENEDOR.png" alt="RE/MAX Zona"><span>Zona Inmobiliaria</span></a>
+      <nav class="sidebar-nav" aria-label="Secciones de administración">
+        <a href="../Index.html" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">⌂</span> Ver sitio</a>
+        <button class="tab is-active" role="tab" aria-selected="true" data-panel="properties"><span aria-hidden="true">▦</span> Proyectos</button>
+        <button class="tab" role="tab" aria-selected="false" data-panel="agents"><span aria-hidden="true">♟</span> Vendedores</button>
+      </nav>
+      <div class="sidebar-footer"><button class="sign-out" id="sign-out" type="button"><span aria-hidden="true">↪</span> Cerrar sesión</button></div>
+    </aside>
+
+    <div class="dashboard-content">
+      <header class="topbar"><button class="mobile-brand" type="button" aria-label="Menú">☰</button><div class="topbar-user"><span class="user-avatar" aria-hidden="true">A</span><span>Administrador</span></div></header>
+      <main class="workspace">
+        <p class="message" id="admin-message" aria-live="polite"></p>
+
+        <section class="panel" id="properties">
+          <div class="page-heading"><div><p class="eyebrow">Administración de contenido</p><h1><span aria-hidden="true">▦</span> Gestión de Proyectos Inmobiliarios</h1><p>Aquí puedes actualizar, agregar o desactivar los proyectos que se muestran en el micrositio.</p></div><button id="new-property" type="button">＋ Agregar proyecto</button></div>
+          <div class="management-layout"><div class="data-area"><div class="list-toolbar"><span class="search-hint">⌕ <span>Proyectos disponibles</span></span><span class="count-label" id="properties-count"></span></div><div class="list-head list-head--properties"><span>Imagen</span><span>Nombre del proyecto</span><span>Ubicación</span><span>Estado</span><span>Acciones</span></div><div class="content-list" id="properties-list"></div></div>
+            <form class="content-form editor-panel" id="property-form" hidden><div class="form-header"><h2 id="property-form-title">Nuevo proyecto</h2><button class="icon-button" id="property-reset" type="button" aria-label="Cerrar editor">×</button></div><input type="hidden" id="property-id"><label>Nombre del proyecto<input id="property-title" required maxlength="140"></label><label>Ubicación<input id="property-location" required maxlength="140"></label><label>Enlace de información<input id="property-url" type="url" required placeholder="https://..."></label><label>Orden de aparición<input id="property-order" type="number" min="1" required></label><label>Imagen del proyecto<input id="property-image" type="file" accept="image/*"></label><label class="check"><input id="property-active" type="checkbox" checked><span class="switch" aria-hidden="true"></span> Visible en el sitio</label><button type="submit">Guardar cambios</button></form>
+          </div>
+        </section>
+
+        <section class="panel" id="agents" hidden>
+          <div class="page-heading"><div><p class="eyebrow">Administración de contenido</p><h1><span aria-hidden="true">♟</span> Vendedores destacados</h1><p>Gestiona los tres asesores inmobiliarios que se muestran en la portada.</p></div></div>
+          <div class="management-layout"><div class="data-area"><div class="list-toolbar"><span class="search-hint">⌕ <span>Vendedores destacados</span></span><span class="count-label" id="agents-count"></span></div><div class="list-head list-head--agents"><span>Imagen</span><span>Nombre y contacto</span><span>Posición</span><span>Estado</span><span>Acciones</span></div><div class="content-list" id="agents-list"></div></div>
+            <form class="content-form editor-panel" id="agent-form"><div class="form-header"><h2 id="agent-form-title">Editar vendedor</h2><button class="icon-button" id="agent-reset" type="button" aria-label="Limpiar formulario">×</button></div><input type="hidden" id="agent-id"><label>Nombre<input id="agent-name" required maxlength="100"></label><label>Teléfono visible<input id="agent-phone" required maxlength="30" placeholder="969 322 977"></label><label>WhatsApp (solo números con código de país)<input id="agent-whatsapp" required inputmode="numeric" pattern="[0-9]+" placeholder="51969322977"></label><label>Posición<select id="agent-order" required><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label><label>Imagen<input id="agent-image" type="file" accept="image/*"></label><label class="check"><input id="agent-active" type="checkbox" checked><span class="switch" aria-hidden="true"></span> Visible en el sitio</label><button type="submit">Guardar cambios</button></form>
+          </div>
+        </section>
+      </main>
+    </div>
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
